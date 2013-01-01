@@ -270,6 +270,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.bitrateComboBox);
             this.Controls.Add(this.deviceListBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Spotify Recorder";
             this.ResumeLayout(false);
