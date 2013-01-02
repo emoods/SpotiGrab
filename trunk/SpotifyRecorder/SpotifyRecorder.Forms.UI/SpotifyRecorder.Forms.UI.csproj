@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SpotifyRecorder.Forms.UI</RootNamespace>
-    <AssemblyName>SpotifyRecorder.Forms.UI</AssemblyName>
+    <AssemblyName>SpotifyRecorder</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
