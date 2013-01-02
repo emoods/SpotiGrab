@@ -117,25 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>To make this application work, there some things important to know. 
-
-First of all the soundcard should be visible. In Windows 7, it can be that the sound card is hidden and disabled
-To change this
-1. Open the Control Panel. (Classic View)
-2. Click on the Sound icon.
-3. Click on the Recording tab.
-4. Right click on a empty area and click on Show Disabled Devices
-5. Enable your sound device
-
-Possible issues
-At the moment the stream is id first recorded as wav and later after that converted into MP3.
-For larger recordings and slow computers this can be an issue.
-
-At the moment, song titles are not checked for strange characters in the filename. This can be an issue
-
-Further, developement depends on the interest in the application</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

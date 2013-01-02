@@ -281,5 +281,11 @@ namespace SpotifyRecorder.Forms.UI
             Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
             return r.Replace(filename, replaceChar);
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://spotifyrecorder.codeplex.com");
+            
+        }
     }
 }
