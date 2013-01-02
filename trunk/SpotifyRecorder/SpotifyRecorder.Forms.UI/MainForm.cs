@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
@@ -147,8 +148,8 @@ namespace SpotifyRecorder.Forms.UI
         private string CreateOutputFile(string song, string extension)
         {
             //todo:escape
+            song = RemoveInvalidFilePathCharacters(song, string.Empty);
             return Path.Combine(outputFolderTextBox.Text, string.Format("{0}.{1}", song, extension));
-
         }
         private void RecordSong(string song)
         {
@@ -273,6 +274,12 @@ namespace SpotifyRecorder.Forms.UI
             //Process.Start("http://www.google.com/");
             MessageBox.Show("Donations for the work done and future work are welcome.\r\nMy paypal account is paypal@atriumstede.nl",
                 "Donation");
+        }
+        public static string RemoveInvalidFilePathCharacters(string filename, string replaceChar)
+        {
+            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            return r.Replace(filename, replaceChar);
         }
     }
 }
