@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Configuration;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,9 +17,19 @@ namespace SpotifyRecorder.Forms.UI
 {
     public partial class MainForm : Form
     {
-        private IWaveIn waveIn;
-        private WaveFileWriter writer;
+        private enum ApplicationState
+        {
+            NotRecording = 1,
+            WaitingForRecording = 2,
+            Recording = 3,
+            Closing = 4
+        }
+
+        private SoundCardRecorder SoundCardRecorder { get; set; }
+
         private Timer songTicker;
+        private FolderBrowserDialog folderDialog;
+        private ApplicationState _currentApplicationState = ApplicationState.NotRecording;
 
         public MainForm()
         {
@@ -35,6 +46,97 @@ namespace SpotifyRecorder.Forms.UI
             Closing += OnClosing;
         }
 
+        private void ChangeApplicationState(ApplicationState newState)
+        {
+            ChangeGui(newState);
+
+            switch (_currentApplicationState)
+            {
+                case ApplicationState.NotRecording:
+                    switch (newState)
+                    {
+                        case ApplicationState.NotRecording:
+                            break;
+                        case ApplicationState.WaitingForRecording:
+                            break;
+                        case ApplicationState.Recording:
+                            StartRecording((MMDevice)deviceListBox.SelectedItem, songLabel.Text);
+                            break;
+                        case ApplicationState.Closing:
+                            break;
+                    }
+
+                    break;
+                case ApplicationState.WaitingForRecording:
+                    switch (newState)
+                    {
+                        case ApplicationState.NotRecording:
+                            break;
+                        case ApplicationState.WaitingForRecording:
+                            throw new Exception(string.Format("NY {0} - {1}",_currentApplicationState,newState));
+                        case ApplicationState.Recording:
+                            StartRecording((MMDevice)deviceListBox.SelectedItem, songLabel.Text);
+                            break;
+                        case ApplicationState.Closing:
+                            Close();
+                            break;
+                    }
+                    break;
+                case ApplicationState.Recording:
+                    switch (newState)
+                    {
+                        case ApplicationState.NotRecording:
+                            StopRecording();
+                            break;
+                        case ApplicationState.Recording: //file changed
+                            StopRecording();
+                            StartRecording((MMDevice)deviceListBox.SelectedItem, songLabel.Text);
+                            break;
+                        case ApplicationState.WaitingForRecording: //file changed
+                            StopRecording();
+                            break;
+                    }
+                    break;
+
+            }
+            _currentApplicationState = newState;
+        }
+
+        private void ChangeGui(ApplicationState state)
+        {
+            switch (state)
+            {
+                case ApplicationState.NotRecording:
+                    browseButton.Enabled = true;
+                    buttonStartRecording.Enabled = true;
+                    buttonStopRecording.Enabled = false;
+                    bitrateComboBox.Enabled = true;
+                    deviceListBox.Enabled = true;
+                    thresholdCheckBox.Enabled = true;
+                    thresholdTextBox.Enabled = true;
+                    break;
+                case ApplicationState.WaitingForRecording:
+                    browseButton.Enabled = false;
+                    buttonStartRecording.Enabled = false;
+                    buttonStopRecording.Enabled = true;
+                    bitrateComboBox.Enabled = false;
+                    deviceListBox.Enabled = false;
+                    thresholdCheckBox.Enabled = false;
+                    thresholdTextBox.Enabled = false;
+                    break;
+                case ApplicationState.Recording:
+                    browseButton.Enabled = false;
+                    buttonStartRecording.Enabled = false;
+                    buttonStopRecording.Enabled = true;
+                    bitrateComboBox.Enabled = false;
+                    deviceListBox.Enabled = false;
+                    thresholdCheckBox.Enabled = false;
+                    thresholdTextBox.Enabled = false;
+                    break;
+
+            }
+
+        }
         /// <summary>
         /// After the form is created
         /// </summary>
@@ -42,27 +144,29 @@ namespace SpotifyRecorder.Forms.UI
         /// <param name="eventArgs"></param>
         private void OnLoad(object sender, EventArgs eventArgs)
         {
+            //initial loading
             //load the available devices
             LoadWasapiDevicesCombo();
 
             //load the different bitrates
             LoadBitrateCombo();
 
+            //Load user settings
+            LoadUserSettings();
+
             //check if spotify title is changing
-            songTicker = new Timer { Interval = 100 };
-            songTicker.Tick += songTicker_Tick;
+            songTicker = new Timer { Interval = Settings.Default.SongscanInterval };
+            songTicker.Tick += SongTickerTick;
             songTicker.Start();
 
-            //set the default output to the music directory
-            outputFolderTextBox.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "SpotifyRecorder");
-            if (!Directory.Exists(outputFolderTextBox.Text))
-                Directory.CreateDirectory(outputFolderTextBox.Text);
-
-            //set the change event if song is 
+            //set the change event if filePath is 
             songLabel.Text = string.Empty;
-            songLabel.TextChanged += songLabel_TextChanged;
 
-            versionLabel.Text = string.Format("Version {0}",Application.ProductVersion);
+            folderDialog = new FolderBrowserDialog { SelectedPath = outputFolderTextBox.Text };
+
+            versionLabel.Text = string.Format("Version {0}", Application.ProductVersion);
+
+            ChangeApplicationState(_currentApplicationState);
         }
 
         /// <summary>
@@ -72,38 +176,49 @@ namespace SpotifyRecorder.Forms.UI
         /// <param name="cancelEventArgs"></param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
-            StopRecording(songLabel.Text);
+            ChangeApplicationState(ApplicationState.Closing);
+            Util.SetDefaultBitrate((int)bitrateComboBox.SelectedItem);
+            Util.SetDefaultDevice(deviceListBox.SelectedItem.ToString());
+            Util.SetDefaultOutputPath(outputFolderTextBox.Text);
+            Util.SetDefaultThreshold((int)thresholdTextBox.Value);
+            Util.SetDefaultThreshold((int)thresholdTextBox.Value);
+            Util.SetDefaultThresholdEnabled(thresholdCheckBox.Checked);
         }
 
-        void songTicker_Tick(object sender, EventArgs e)
+        void SongTickerTick(object sender, EventArgs e)
         {
             //get the current title from spotify
             string song = GetSpotifySong();
 
             if (!songLabel.Text.Equals(song))
             {
+                songLabel.Text = song;
                 if (songLabel.Text.Trim().Length > 0)
                 {
-                    StopRecording(songLabel.Text);
+                    if (_currentApplicationState != ApplicationState.NotRecording)
+                        ChangeApplicationState(ApplicationState.Recording);
+                    else if (_currentApplicationState == ApplicationState.Recording)
+                        ChangeApplicationState(ApplicationState.WaitingForRecording);
                 }
-                songLabel.Text = song;
+                else
+                {
+                    if(_currentApplicationState==ApplicationState.Recording)
+                        ChangeApplicationState(ApplicationState.WaitingForRecording);
+
+                }
             }
         }
 
-        void songLabel_TextChanged(object sender, EventArgs e)
-        {
-            RecordSong(songLabel.Text);
-        }
 
-        private void buttonPlay_Click(object sender, EventArgs e)
+        private void ButtonPlayClick(object sender, EventArgs e)
         {
             if (listBoxRecordings.SelectedItem != null)
             {
-                Process.Start(CreateOutputFile((string)listBoxRecordings.SelectedItem,"mp3"));
+                Process.Start(CreateOutputFile((string)listBoxRecordings.SelectedItem, "mp3"));
             }
         }
 
-        private void buttonDelete_Click(object sender, EventArgs e)
+        private void ButtonDeleteClick(object sender, EventArgs e)
         {
             if (listBoxRecordings.SelectedItem != null)
             {
@@ -123,63 +238,82 @@ namespace SpotifyRecorder.Forms.UI
             }
         }
 
-        private void buttonOpenFolder_Click(object sender, EventArgs e)
+        private void ButtonOpenFolderClick(object sender, EventArgs e)
         {
             Process.Start(outputFolderTextBox.Text);
         }
 
-        private void buttonStartRecording_Click(object sender, EventArgs e)
+        private void ButtonStartRecordingClick(object sender, EventArgs e)
         {
-            buttonStartRecording.Enabled = false;
-            RecordSong(songLabel.Text);
+            ChangeApplicationState(songLabel.Text.Trim().Length > 0
+                                       ? ApplicationState.Recording
+                                       : ApplicationState.WaitingForRecording);
         }
 
-        private void buttonStopRecording_Click(object sender, EventArgs e)
+        private void ButtonStopRecordingClick(object sender, EventArgs e)
         {
-            buttonStartRecording.Enabled = true;
-            StopRecording(songLabel.Text);
+            ChangeApplicationState(ApplicationState.NotRecording);
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
+        private void ClearButtonClick(object sender, EventArgs e)
         {
             listBoxRecordings.Items.Clear();
         }
 
         private string CreateOutputFile(string song, string extension)
         {
-            //todo:escape
             song = RemoveInvalidFilePathCharacters(song, string.Empty);
             return Path.Combine(outputFolderTextBox.Text, string.Format("{0}.{1}", song, extension));
         }
-        private void RecordSong(string song)
+        private void StartRecording(MMDevice device, string song)
         {
-            if (!buttonStartRecording.Enabled)
+            if (!string.IsNullOrEmpty(song) && device != null)
             {
-                if (songLabel.Text.Length > 0)
-                {
-                    // can't set WaveFormat as WASAPI doesn't support SRC
-                    var device = (MMDevice)deviceListBox.SelectedItem;
-                    waveIn = new WasapiCapture(device);
-                    writer = new WaveFileWriter(CreateOutputFile(song, "wav"), waveIn.WaveFormat);
-                    waveIn.DataAvailable += OnDataAvailable;
-                    //waveIn.RecordingStopped += OnRecordingStopped;
-                    waveIn.StartRecording();
-                }
+                if(SoundCardRecorder!=null)
+                    StopRecording();
+                
+                SoundCardRecorder = new SoundCardRecorder(
+                                device, CreateOutputFile(songLabel.Text, "wav"),
+                                songLabel.Text);
+                SoundCardRecorder.Start();
             }
         }
 
-        private Mp3Tag ExtractMp3Tag(string song)
+        private void StopRecording()
         {
-            string[] split = song.Split(new []{"-"}, 2, StringSplitOptions.RemoveEmptyEntries);
-            Mp3Tag tag = new Mp3Tag(
-                split.Length>1?split[1]:string.Empty,
-                split[0]
-                );
-            return tag;
+            string filePath = string.Empty;
+            string song = string.Empty;
+            TimeSpan duration = new TimeSpan();
+            if (SoundCardRecorder != null)
+            {
+                SoundCardRecorder.Stop();
+                filePath = SoundCardRecorder.FilePath;
+                song = SoundCardRecorder.Song;
+                duration = SoundCardRecorder.Duration;
+                SoundCardRecorder.Dispose();
+                SoundCardRecorder = null;
+
+                if (duration.Seconds < (int) thresholdTextBox.Value && thresholdCheckBox.Checked)
+                    File.Delete(filePath);
+                else
+                {
+                    if (!string.IsNullOrEmpty(filePath))
+                    {
+                        int newItemIndex = listBoxRecordings.Items.Add(song);
+                        listBoxRecordings.SelectedIndex = newItemIndex;
+                        PostProcessing(song);
+                    }
+                }
+            }
+
         }
 
-        private void ConvertToMp3(string song, int bitrate)
+
+        private void ConvertToMp3(string filePath, int bitrate)
         {
+            if (!File.Exists(CreateOutputFile(filePath, "wav")))
+                return;
+
             //Thread.Sleep(500);
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;
@@ -188,12 +322,12 @@ namespace SpotifyRecorder.Forms.UI
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-            Mp3Tag tag = ExtractMp3Tag(song);
+            Mp3Tag tag = Util.ExtractMp3Tag(filePath);
 
             process.StartInfo.FileName = "lame.exe";
-            process.StartInfo.Arguments = string.Format("-b {2} --tt \"{3}\" --ta \"{4}\"  \"{0}\" \"{1}\"", 
-                CreateOutputFile(song,"wav"), 
-                CreateOutputFile(song,"mp3"),
+            process.StartInfo.Arguments = string.Format("-b {2} --tt \"{3}\" --ta \"{4}\"  \"{0}\" \"{1}\"",
+                CreateOutputFile(filePath, "wav"),
+                CreateOutputFile(filePath, "mp3"),
                 bitrate,
                 tag.Title,
                 tag.Artist);
@@ -203,7 +337,7 @@ namespace SpotifyRecorder.Forms.UI
             process.WaitForExit(20000);
             if (!process.HasExited)
                 process.Kill();
-            File.Delete(CreateOutputFile(song,"wav"));
+            File.Delete(CreateOutputFile(filePath, "wav"));
         }
 
         private void LoadWasapiDevicesCombo()
@@ -219,59 +353,55 @@ namespace SpotifyRecorder.Forms.UI
             List<int> bitrate = new List<int> { 96, 128, 160, 192, 320 };
 
             bitrateComboBox.DataSource = bitrate;
-            bitrateComboBox.SelectedItem = 128;
+        }
+
+        /// <summary>
+        /// load the setting from a previous session
+        /// </summary>
+        private void LoadUserSettings()
+        {
+            //get/set the device
+            string defaultDevice = Util.GetDefaultDevice();
+
+            foreach (MMDevice device in deviceListBox.Items)
+            {
+                if (device.FriendlyName.Equals(defaultDevice))
+                    deviceListBox.SelectedItem = device;
+            }
+
+            //set the default output to the music directory
+            outputFolderTextBox.Text = Util.GetDefaultOutputPath();
+
+            //set the default bitrate
+            bitrateComboBox.SelectedItem = Util.GetDefaultBitrate();
+
+            thresholdTextBox.Value = Util.GetDefaultThreshold();
+            thresholdCheckBox.Checked = Util.GetDefaultThresholdEnabled();
+
         }
 
         private string GetSpotifySong()
         {
-            string song = Process.GetProcessesByName("spotify")[0].MainWindowTitle;
-            return song.Length > 7 ? song.Substring(10).Trim() : string.Empty;
+            Process[] process = Process.GetProcessesByName("spotify");
+            if (process != null && process.Length > 0)
+            {
+                string song = Process.GetProcessesByName("spotify")[0].MainWindowTitle;
+                return song.Length > 7 ? song.Substring(10).Trim() : string.Empty;
+            }
+            return string.Empty;
 
         }
 
         private void PostProcessing(string song)
         {
-            Task t = new Task(() => ConvertToMp3(song,(int)bitrateComboBox.SelectedItem));
+            int bitrate = (int) bitrateComboBox.SelectedItem;
+            Task t = new Task(() => ConvertToMp3(song,bitrate));
             t.Start();
-            //convert to MP3
         }
 
-        void OnDataAvailable(object sender, WaveInEventArgs e)
+
+        private void DonateLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new EventHandler<WaveInEventArgs>(OnDataAvailable), sender, e);
-            }
-            else
-            {
-                if (writer != null)
-                    writer.Write(e.Buffer, 0, e.BytesRecorded);
-            }
-        }
-
-        private void StopRecording(string song)
-        {
-            int newItemIndex = listBoxRecordings.Items.Add(song);
-            listBoxRecordings.SelectedIndex = newItemIndex;
-            PostProcessing(song);
-
-            if (waveIn != null) // working around problem with double raising of RecordingStopped
-            {
-                waveIn.StopRecording();
-                waveIn.Dispose();
-                waveIn = null;
-            }
-            if (writer != null)
-            {
-                writer.Close();
-                writer = null;
-            }
-
-        }
-
-        private void donateLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //Process.Start("http://www.google.com/");
             MessageBox.Show("Donations for the work done and future work are welcome.\r\nMy paypal account is paypal@atriumstede.nl",
                 "Donation");
         }
@@ -282,10 +412,25 @@ namespace SpotifyRecorder.Forms.UI
             return r.Replace(filename, replaceChar);
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void HelpLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://spotifyrecorder.codeplex.com");
-            
+            Process.Start("http://spotifyrecorder.codeplex.com");
+
         }
+
+        private void BrowseButtonClick(object sender, EventArgs e)
+        {
+            if (folderDialog.ShowDialog() == DialogResult.OK)
+            {
+                outputFolderTextBox.Text = folderDialog.SelectedPath;
+                Util.SetDefaultOutputPath(folderDialog.SelectedPath);
+            }
+        }
+
+        private void OpenMixerButtonClick(object sender, EventArgs e)
+        {
+            Process.Start("sndvol");
+        }
+
     }
 }
