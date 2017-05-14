@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.deviceListBox = new System.Windows.Forms.ComboBox();
             this.buttonOpenFolder = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
@@ -54,32 +52,15 @@
             this.thresholdCheckBox = new System.Windows.Forms.CheckBox();
             this.openMixerButton = new System.Windows.Forms.Button();
             this.thresholdTextBox = new System.Windows.Forms.NumericUpDown();
+            this.volumeMeter1 = new NAudio.Gui.VolumeMeter();
+            this.volumeMeter2 = new NAudio.Gui.VolumeMeter();
             ((System.ComponentModel.ISupportInitialize)(this.thresholdTextBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Device";
-            // 
-            // deviceListBox
-            // 
-            this.deviceListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.deviceListBox.FormattingEnabled = true;
-            this.deviceListBox.Location = new System.Drawing.Point(158, 12);
-            this.deviceListBox.Name = "deviceListBox";
-            this.deviceListBox.Size = new System.Drawing.Size(496, 21);
-            this.deviceListBox.TabIndex = 0;
             // 
             // buttonOpenFolder
             // 
             this.buttonOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOpenFolder.Location = new System.Drawing.Point(579, 262);
+            this.buttonOpenFolder.Location = new System.Drawing.Point(587, 226);
             this.buttonOpenFolder.Name = "buttonOpenFolder";
             this.buttonOpenFolder.Size = new System.Drawing.Size(75, 23);
             this.buttonOpenFolder.TabIndex = 17;
@@ -90,7 +71,7 @@
             // buttonDelete
             // 
             this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDelete.Location = new System.Drawing.Point(579, 233);
+            this.buttonDelete.Location = new System.Drawing.Point(587, 197);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(75, 23);
             this.buttonDelete.TabIndex = 18;
@@ -101,7 +82,7 @@
             // buttonPlay
             // 
             this.buttonPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonPlay.Location = new System.Drawing.Point(579, 204);
+            this.buttonPlay.Location = new System.Drawing.Point(587, 168);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(75, 23);
             this.buttonPlay.TabIndex = 16;
@@ -115,15 +96,15 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxRecordings.FormattingEnabled = true;
-            this.listBoxRecordings.Location = new System.Drawing.Point(12, 204);
+            this.listBoxRecordings.Location = new System.Drawing.Point(12, 168);
             this.listBoxRecordings.Name = "listBoxRecordings";
             this.listBoxRecordings.ScrollAlwaysVisible = true;
-            this.listBoxRecordings.Size = new System.Drawing.Size(561, 173);
+            this.listBoxRecordings.Size = new System.Drawing.Size(569, 108);
             this.listBoxRecordings.TabIndex = 15;
             // 
             // buttonStopRecording
             // 
-            this.buttonStopRecording.Location = new System.Drawing.Point(123, 175);
+            this.buttonStopRecording.Location = new System.Drawing.Point(123, 139);
             this.buttonStopRecording.Name = "buttonStopRecording";
             this.buttonStopRecording.Size = new System.Drawing.Size(105, 23);
             this.buttonStopRecording.TabIndex = 11;
@@ -133,7 +114,7 @@
             // 
             // buttonStartRecording
             // 
-            this.buttonStartRecording.Location = new System.Drawing.Point(12, 175);
+            this.buttonStartRecording.Location = new System.Drawing.Point(12, 139);
             this.buttonStartRecording.Name = "buttonStartRecording";
             this.buttonStartRecording.Size = new System.Drawing.Size(105, 23);
             this.buttonStartRecording.TabIndex = 12;
@@ -144,7 +125,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 46);
+            this.label3.Location = new System.Drawing.Point(12, 15);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 1;
@@ -155,15 +136,15 @@
             this.outputFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputFolderTextBox.Enabled = false;
-            this.outputFolderTextBox.Location = new System.Drawing.Point(158, 46);
+            this.outputFolderTextBox.Location = new System.Drawing.Point(158, 12);
             this.outputFolderTextBox.Name = "outputFolderTextBox";
-            this.outputFolderTextBox.Size = new System.Drawing.Size(415, 20);
+            this.outputFolderTextBox.Size = new System.Drawing.Size(423, 20);
             this.outputFolderTextBox.TabIndex = 20;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 75);
+            this.label4.Location = new System.Drawing.Point(12, 49);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(37, 13);
             this.label4.TabIndex = 1;
@@ -173,16 +154,21 @@
             // 
             this.bitrateComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.bitrateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.bitrateComboBox.FormattingEnabled = true;
-            this.bitrateComboBox.Location = new System.Drawing.Point(158, 72);
+            this.bitrateComboBox.Items.AddRange(new object[] {
+            "128",
+            "192",
+            "320"});
+            this.bitrateComboBox.Location = new System.Drawing.Point(158, 46);
             this.bitrateComboBox.Name = "bitrateComboBox";
-            this.bitrateComboBox.Size = new System.Drawing.Size(496, 21);
+            this.bitrateComboBox.Size = new System.Drawing.Size(101, 21);
             this.bitrateComboBox.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 137);
+            this.label2.Location = new System.Drawing.Point(12, 111);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 13);
             this.label2.TabIndex = 1;
@@ -191,7 +177,7 @@
             // songLabel
             // 
             this.songLabel.AutoSize = true;
-            this.songLabel.Location = new System.Drawing.Point(157, 137);
+            this.songLabel.Location = new System.Drawing.Point(157, 111);
             this.songLabel.Name = "songLabel";
             this.songLabel.Size = new System.Drawing.Size(30, 13);
             this.songLabel.TabIndex = 1;
@@ -200,7 +186,7 @@
             // clearButton
             // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearButton.Location = new System.Drawing.Point(579, 291);
+            this.clearButton.Location = new System.Drawing.Point(587, 255);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(75, 23);
             this.clearButton.TabIndex = 17;
@@ -212,7 +198,7 @@
             // 
             this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(9, 439);
+            this.versionLabel.Location = new System.Drawing.Point(12, 335);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(35, 13);
             this.versionLabel.TabIndex = 21;
@@ -225,7 +211,7 @@
             this.donateLink.BackColor = System.Drawing.SystemColors.Control;
             this.donateLink.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.donateLink.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.donateLink.Location = new System.Drawing.Point(557, 439);
+            this.donateLink.Location = new System.Drawing.Point(568, 335);
             this.donateLink.Name = "donateLink";
             this.donateLink.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.donateLink.Size = new System.Drawing.Size(100, 13);
@@ -239,7 +225,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 391);
+            this.label5.Location = new System.Drawing.Point(12, 287);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(210, 13);
             this.label5.TabIndex = 24;
@@ -251,7 +237,7 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.linkLabel1.Location = new System.Drawing.Point(9, 414);
+            this.linkLabel1.Location = new System.Drawing.Point(12, 310);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(181, 13);
             this.linkLabel1.TabIndex = 25;
@@ -262,7 +248,7 @@
             // browseButton
             // 
             this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.browseButton.Location = new System.Drawing.Point(579, 44);
+            this.browseButton.Location = new System.Drawing.Point(587, 12);
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(75, 23);
             this.browseButton.TabIndex = 26;
@@ -273,7 +259,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 102);
+            this.label6.Location = new System.Drawing.Point(12, 76);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(142, 13);
             this.label6.TabIndex = 1;
@@ -282,7 +268,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(265, 103);
+            this.label7.Location = new System.Drawing.Point(265, 77);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(234, 13);
             this.label7.TabIndex = 1;
@@ -291,7 +277,7 @@
             // thresholdCheckBox
             // 
             this.thresholdCheckBox.AutoSize = true;
-            this.thresholdCheckBox.Location = new System.Drawing.Point(160, 102);
+            this.thresholdCheckBox.Location = new System.Drawing.Point(160, 76);
             this.thresholdCheckBox.Name = "thresholdCheckBox";
             this.thresholdCheckBox.Size = new System.Drawing.Size(15, 14);
             this.thresholdCheckBox.TabIndex = 27;
@@ -299,7 +285,7 @@
             // 
             // openMixerButton
             // 
-            this.openMixerButton.Location = new System.Drawing.Point(234, 175);
+            this.openMixerButton.Location = new System.Drawing.Point(234, 139);
             this.openMixerButton.Name = "openMixerButton";
             this.openMixerButton.Size = new System.Drawing.Size(105, 23);
             this.openMixerButton.TabIndex = 11;
@@ -309,16 +295,37 @@
             // 
             // thresholdTextBox
             // 
-            this.thresholdTextBox.Location = new System.Drawing.Point(181, 100);
+            this.thresholdTextBox.Location = new System.Drawing.Point(181, 74);
             this.thresholdTextBox.Name = "thresholdTextBox";
             this.thresholdTextBox.Size = new System.Drawing.Size(78, 20);
             this.thresholdTextBox.TabIndex = 28;
+            // 
+            // volumeMeter1
+            // 
+            this.volumeMeter1.AllowDrop = true;
+            this.volumeMeter1.Amplitude = 0F;
+            this.volumeMeter1.Location = new System.Drawing.Point(616, 46);
+            this.volumeMeter1.MaxDb = 18F;
+            this.volumeMeter1.MinDb = -60F;
+            this.volumeMeter1.Name = "volumeMeter1";
+            this.volumeMeter1.Size = new System.Drawing.Size(20, 100);
+            this.volumeMeter1.TabIndex = 29;
+            // 
+            // volumeMeter2
+            // 
+            this.volumeMeter2.Amplitude = 0F;
+            this.volumeMeter2.Location = new System.Drawing.Point(642, 46);
+            this.volumeMeter2.MaxDb = 18F;
+            this.volumeMeter2.MinDb = -60F;
+            this.volumeMeter2.Name = "volumeMeter2";
+            this.volumeMeter2.Size = new System.Drawing.Size(20, 100);
+            this.volumeMeter2.TabIndex = 30;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(666, 461);
+            this.ClientSize = new System.Drawing.Size(674, 363);
             this.Controls.Add(this.thresholdTextBox);
             this.Controls.Add(this.thresholdCheckBox);
             this.Controls.Add(this.browseButton);
@@ -341,9 +348,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.bitrateComboBox);
-            this.Controls.Add(this.deviceListBox);
+            this.Controls.Add(this.volumeMeter1);
+            this.Controls.Add(this.volumeMeter2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Spotify Recorder";
@@ -354,9 +361,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox deviceListBox;
         private System.Windows.Forms.Button buttonOpenFolder;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.Button buttonPlay;
@@ -380,6 +384,9 @@
         private System.Windows.Forms.CheckBox thresholdCheckBox;
         private System.Windows.Forms.Button openMixerButton;
         private System.Windows.Forms.NumericUpDown thresholdTextBox;
+        private NAudio.Gui.VolumeMeter volumeMeter1;
+        private NAudio.Gui.VolumeMeter volumeMeter2;
+
     }
 }
 

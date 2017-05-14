@@ -65,10 +65,10 @@ namespace SpotifyRecorder.Forms.UI
         }
         public static Mp3Tag ExtractMp3Tag(string song)
         {
-            string[] split = song.Split(new[] { "–" }, 2, StringSplitOptions.RemoveEmptyEntries);
+            string[] split = song.Split(new[] { "-" }, 2, StringSplitOptions.RemoveEmptyEntries);
             Mp3Tag tag = new Mp3Tag(
-                split.Length > 1 ? split[1] : string.Empty,
-                split[0]
+                split.Length > 1 ? split[1].Trim() : string.Empty,
+                split[0].Trim()
                 );
             return tag;
         }
