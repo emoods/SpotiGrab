@@ -1,3 +1,4 @@
 /SpotifyRecorder.Forms.UI/bin
 /SpotifyRecorder.Forms.UI/obj
 /packages
+/SpotifyRecorder.Forms.UI/*.user

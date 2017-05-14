@@ -43,8 +43,6 @@
             this.songLabel = new System.Windows.Forms.Label();
             this.clearButton = new System.Windows.Forms.Button();
             this.versionLabel = new System.Windows.Forms.Label();
-            this.donateLink = new System.Windows.Forms.LinkLabel();
-            this.label5 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.browseButton = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
@@ -198,38 +196,11 @@
             // 
             this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(12, 335);
+            this.versionLabel.Location = new System.Drawing.Point(12, 294);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(35, 13);
             this.versionLabel.TabIndex = 21;
             this.versionLabel.Text = "label5";
-            // 
-            // donateLink
-            // 
-            this.donateLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.donateLink.AutoSize = true;
-            this.donateLink.BackColor = System.Drawing.SystemColors.Control;
-            this.donateLink.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.donateLink.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.donateLink.Location = new System.Drawing.Point(568, 335);
-            this.donateLink.Name = "donateLink";
-            this.donateLink.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.donateLink.Size = new System.Drawing.Size(100, 13);
-            this.donateLink.TabIndex = 22;
-            this.donateLink.TabStop = true;
-            this.donateLink.Text = "Donate with PayPal";
-            this.donateLink.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.donateLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.DonateLinkClicked);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 287);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(210, 13);
-            this.label5.TabIndex = 24;
-            this.label5.Text = "For more information, check the online help";
             // 
             // linkLabel1
             // 
@@ -237,12 +208,12 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.linkLabel1.Location = new System.Drawing.Point(12, 310);
+            this.linkLabel1.Location = new System.Drawing.Point(431, 294);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(181, 13);
+            this.linkLabel1.Size = new System.Drawing.Size(231, 13);
             this.linkLabel1.TabIndex = 25;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "https://spotifyrecorder.codeplex.com";
+            this.linkLabel1.Text = "SpotiGrab is a fork of codepley SpotifyRecorder";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HelpLinkClicked);
             // 
             // browseButton
@@ -325,13 +296,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 363);
+            this.ClientSize = new System.Drawing.Size(674, 322);
             this.Controls.Add(this.thresholdTextBox);
             this.Controls.Add(this.thresholdCheckBox);
             this.Controls.Add(this.browseButton);
             this.Controls.Add(this.linkLabel1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.donateLink);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.outputFolderTextBox);
             this.Controls.Add(this.clearButton);
@@ -353,7 +322,7 @@
             this.Controls.Add(this.volumeMeter2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Spotify Recorder";
+            this.Text = "SpotiGrab https://github.com/emoods/SpotiGrab";
             ((System.ComponentModel.ISupportInitialize)(this.thresholdTextBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -375,8 +344,6 @@
         private System.Windows.Forms.Label songLabel;
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Label versionLabel;
-        private System.Windows.Forms.LinkLabel donateLink;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button browseButton;
         private System.Windows.Forms.Label label6;

@@ -414,17 +414,6 @@ namespace SpotifyRecorder.Forms.UI
 
         }
 
-        private void PostProcessing(string song)
-        {
-          
-        }
-
-
-        private void DonateLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MessageBox.Show("Donations for the work done and future work are welcome.\r\nMy paypal account is paypal@atriumstede.nl",
-                "Donation");
-        }
         public static string RemoveInvalidFilePathCharacters(string filename, string replaceChar)
         {
             string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
