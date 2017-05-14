@@ -397,7 +397,6 @@ namespace SpotifyRecorder.Forms.UI
         private string GetSpotifySong()
         {
             Process[] process = Process.GetProcessesByName("spotify");
-            return "bla";
             if (process != null && process.Length > 0)
             {
                 var song = Process.GetProcessesByName("spotify")[0].MainWindowTitle;
