@@ -1,6 +1,3 @@
-# SpotiGrab (fork of https://spotifyrecorder.codeplex.com/)  thx to the hard work!
+# SpotiGrab is a fork of https://spotifyrecorder.codeplex.com/  thx for the hard work!
 
-SpotiGrab is a simple spotify recorder for windows (.net 4). Is records the output directly. No Stereo Mix Device for recording is needed. 
-Is uses lame encoder to convert to mp3. 
-
-It supports a simple way to skip songs that are below a certain length to remove commercials
+SpotiGrab is a simple spotify recorder for windows (.net 4). It records the output directly so there is no Stereo Mix Device f  needed for recording. 
